@@ -1,10 +1,13 @@
 const express = require("express");
+const cors = require("cors");
 require("dotenv").config();
 const roomRoutes = require("./routes/rooms");
 const userRoutes = require("./routes/users");
 const messageRoutes = require("./routes/messages");
-const app = express();
 const sequelize = require("./config/db");
+
+const app = express();
+app.use(cors());
 
 const server = app.listen(process.env.PORT, async () => {
   console.log(`Server is running on port ${process.env.PORT}`);
