@@ -60,7 +60,7 @@ exports.getUserById = async (req, res) => {
 exports.getGuestId = async (req, res) => {
   const { guestName } = req.body;
   try {
-    const guestId = guestName || `guest_${Math.floor(Math.random() * 1000000)}`;
+    const guestId = `${guestName}${Math.floor(Math.random() * 1000000)}` || `guest_${Math.floor(Math.random() * 1000000)}`;
     res.json({ guestId });
   } catch (error) {
     res.status(400).json({ error: error.message });
