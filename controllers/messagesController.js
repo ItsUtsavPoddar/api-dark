@@ -39,7 +39,7 @@ exports.createAnonymousMessage = async (req, res) => {
 exports.getMessagesByRoom = async (req, res) => {
   const { roomId } = req.params;
   try {
-    const messages = await Message.findAll({ where: { roomId } });
+    const messages = await Message.findAll({ where: `${roomId}` });
     res.json(messages);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -54,7 +54,7 @@ exports.getAnonymousMessagesByRoom = async (req, res) => {
       return res.status(400).json({ error: "Room must be anonymous" });
     }
     const messages = await Message.findAll({
-      where: { roomId },
+      where: `${roomId}`,
     });
     res.json(messages);
   } catch (error) {
