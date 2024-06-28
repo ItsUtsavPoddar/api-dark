@@ -58,12 +58,17 @@ exports.getAllRooms = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-// get rooms by userId from UserRoom
+// get rooms by userId from UserRoom and fetch the rooms from Room using the roomId
 
 exports.getRoomsByUser = async (req, res) => {
   try {
-    const rooms = await UserRoom.findAll({
+    const roomsId = await UserRoom.findAll({
       where: { userId: req.userId },
+    });
+    const rooms = await Room.findAll({
+      where: {
+        id: roomsId.map((userRoom) => userRoom.roomId),
+      },
     });
     res.json(rooms);
   } catch (error) {
