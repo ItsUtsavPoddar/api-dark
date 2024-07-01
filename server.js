@@ -5,9 +5,14 @@ const roomRoutes = require("./routes/rooms");
 const userRoutes = require("./routes/users");
 const messageRoutes = require("./routes/messages");
 const sequelize = require("./config/db");
-
+const socketIo = require("socket.io");
+const {
+  getMessagesByRoomHelper,
+  createMessageHelper,
+} = require("./controllers/messagesController");
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 const server = app.listen(process.env.PORT, async () => {
   console.log(`Server is running on port ${process.env.PORT}`);
@@ -18,7 +23,6 @@ const server = app.listen(process.env.PORT, async () => {
     console.error("Unable to sync the database:", error);
   }
 });
-app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Welcome to the chat app");
@@ -26,3 +30,31 @@ app.get("/", (req, res) => {
 app.use("/rooms", roomRoutes);
 app.use("/users", userRoutes);
 app.use("/messages", messageRoutes);
+
+const io = socketIo(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+
+  socket.on("sendMessage", async ({ roomId, userId, content }) => {
+    // console.log("RECIEVED MESSAGE", roomId, userId, content);
+    try {
+      const newMessage = await createMessageHelper({ userId, roomId, content });
+      console.log(roomId);
+      io.to(roomId).emit("receiveMessage", newMessage);
+      console.log("emitted");
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  });
+  socket.on("joinRoom", (roomId) => {
+    socket.join(roomId);
+  });
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
+});
