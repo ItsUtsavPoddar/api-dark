@@ -9,6 +9,7 @@ const socketIo = require("socket.io");
 const {
   getMessagesByRoomHelper,
   createMessageHelper,
+  createAnonymousMessageHelper,
 } = require("./controllers/messagesController");
 const app = express();
 app.use(cors());
@@ -44,6 +45,21 @@ io.on("connection", (socket) => {
     // console.log("RECIEVED MESSAGE", roomId, userId, content);
     try {
       const newMessage = await createMessageHelper({ userId, roomId, content });
+      console.log(roomId);
+      io.to(roomId).emit("receiveMessage", newMessage);
+      console.log("emitted");
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  });
+  socket.on("sendAnonymousMessage", async ({ roomId, guestName, content }) => {
+    // console.log("RECIEVED MESSAGE", roomId, userId, content);
+    try {
+      const newMessage = await createAnonymousMessageHelper({
+        guestName,
+        roomId,
+        content,
+      });
       console.log(roomId);
       io.to(roomId).emit("receiveMessage", newMessage);
       console.log("emitted");
