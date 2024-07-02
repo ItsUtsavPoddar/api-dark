@@ -101,7 +101,7 @@ exports.joinAnonymousRoom = async (req, res) => {
     if (room.type !== "anonymous") {
       return res.status(400).json({ error: "Not an anonymous room" });
     }
-    res.json({ message: `Joined room ${roomId}` });
+    res.json(room);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
