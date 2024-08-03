@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to the chat app");
 });
 app.use("/rooms", roomRoutes);
-app.use("/users", userRoutes);
+app.use("/users", userRoutes); //users routes
 app.use("/messages", messageRoutes);
 
 const io = socketIo(server, {
