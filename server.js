@@ -28,6 +28,9 @@ const server = app.listen(process.env.PORT, async () => {
 app.get("/", (req, res) => {
   res.send("Welcome to the chat app");
 });
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 app.use("/rooms", roomRoutes);
 app.use("/users", userRoutes);
 app.use("/messages", messageRoutes);
